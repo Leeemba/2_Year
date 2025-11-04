@@ -58,7 +58,7 @@ class Program
 {
     static void Main()
     {
-        string path = "D:/yDownloads/LAB5/IMDb movies.csv"; // Путь к локальному файлу после скачивания
+        string path = "D:/yDownloads/IMDb movies.csv"; // Путь к локальному файлу после скачивания
 
         var csvData = ReadAllCsvLines(path);
 
@@ -134,6 +134,7 @@ else
         return result;
     }
 }
+
 
 
 
