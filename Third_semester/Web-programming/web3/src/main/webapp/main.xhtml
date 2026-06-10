@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<f:view locale="en_US">
+    <h:head>
+        <title>Area Check Terminal</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+        <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&amp;display=swap"
+              rel="stylesheet"/>
+        <h:outputStylesheet library="css" name="styles.css"/>
+
+        <h:inputHidden id="currentRValue" value="#{pointBean.r}"/>
+    </h:head>
+
+    <h:body>
+        <header class="main-header">
+            <div class="header-content">
+                <div class="header-left">
+                </div>
+                <div class="header-center">
+                    <div class="header-info">
+                        <span>#{startPageBean.variantNumber} | #{startPageBean.studentName} | #{startPageBean.groupNumber}</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="clock" id="current-time">
+                        <h:form id="timeForm" style="display:none;">
+                            <h:panelGroup id="serverTime">
+                                <ui:include src="/server-time.xhtml"/>
+                            </h:panelGroup>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="page-container">
+            <div class="content-grid">
+                <div class="graph-container">
+                    <h:form id="graphForm">
+                        <div class="panel">
+                            <div class="panel-header">
+                                <h2><i class="fas fa-project-diagram"></i>GRAPH</h2>
+                                <div class="panel-controls">
+                                    <button type="button" id="focus-canvas" class="panel-btn" title="Focus Canvas (F)">
+                                        <i class="fas fa-bullseye"></i>
+                                    </button>
+                                    <button type="button" id="reset-view" class="panel-btn" title="Reset View (0)">
+                                        <i class="fas fa-crosshairs"></i>
+                                    </button>
+                                    <button type="button" id="zoom-in" class="panel-btn" title="Zoom In (+)">
+                                        <i class="fas fa-search-plus"></i>
+                                    </button>
+                                    <button type="button" id="zoom-out" class="panel-btn" title="Zoom Out (-)">
+                                        <i class="fas fa-search-minus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="panel-content graph-content">
+                                <canvas id="canvas" width="500" height="500" tabindex="0"></canvas>
+                            </div>
+                        </div>
+                    </h:form>
+                </div>
+
+                <div class="control-container">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h2><i class="fas fa-sliders-h"></i>CONTROLS</h2>
+                        </div>
+
+                        <div class="panel-content control-content">
+                            <h:form id="pointForm">
+                                <div class="input-group">
+                                    <label for="xSpinner" class="input-label">
+                                        X COORDINATE
+                                    </label>
+                                    <p:spinner id="xSpinner" value="#{pointBean.x}"
+                                               min="-10" max="10" stepFactor="0.1" decimalPlaces="3"
+                                               styleClass="terminal-input"
+                                               placeholder="Enter X value [-4; 4]"
+                                               onchange="handleXChange(this.value)"
+                                               onkeydown="return false;"
+                                               thousandSeparator=","
+                                               decimalSeparator=".">
+                                        <p:ajax event="change" update="xError" />
+                                    </p:spinner>
+                                    <p:outputPanel id="xError" styleClass="error-message"
+                                                   style="display: #{pointBean.x lt -4 or pointBean.x gt 4 ? 'flex' : 'none'};">
+                                        <i class="fas fa-times-circle"></i> X must be between -4 and 4
+                                    </p:outputPanel>
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="yInput" class="input-label">
+                                        Y COORDINATE
+                                    </label>
+                                    <p:inputText id="yInput" value="#{pointBean.y}"
+                                                 styleClass="terminal-input"
+                                                 placeholder="Enter Y value [-3; 3]"
+                                                 oninput="validateInput(this)"
+                                                 onkeyup="validateInput(this)"
+                                                 onchange="handleYChange(this.value)">
+                                        <p:ajax event="change" update="yError"/>
+                                    </p:inputText>
+                                    <p:outputPanel id="yError" styleClass="error-message"
+                                                   style="display: #{pointBean.y lt -3 or pointBean.y gt 3 ? 'flex' : 'none'};">
+                                        <i class="fas fa-times-circle"></i> Y must be between -3 and 3
+                                    </p:outputPanel>
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="rSpinner" class="input-label">
+                                        RADIUS
+                                    </label>
+                                    <p:spinner id="rSpinner" value="#{pointBean.r}"
+                                               min="0.1" max="3" stepFactor="0.1"
+                                               styleClass="terminal-input"
+                                               onchange="handleRChange(this.value);"
+                                               onkeydown="return false;"
+                                               thousandSeparator=","
+                                               decimalSeparator=".">
+                                        <p:ajax event="change" update="@form" />
+                                    </p:spinner>
+                                </div>
+
+                                <p:commandButton id="submitButton" value="SUBMIT"
+                                                 action="#{pointBean.checkPoint}"
+                                                 styleClass="terminal-btn primary"
+                                                 update="resultsTable, pointForm"
+                                                 process="@form"
+                                                 oncomplete="if(window.displayPoint !== undefined) window.displayPoint = null; if(window.updatePointsData) window.updatePointsData();"/>
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="results-container">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h2><i class="fas fa-database"></i>RESULTS</h2>
+                            <div class="panel-controls">
+                                <h:form id="clearForm" prependId="false">
+                                    <p:commandButton value="CLEAR"
+                                                     action="#{resultsBean.clearResults}"
+                                                     styleClass="terminal-btn secondary"
+                                                     update="resultsTable"
+                                                     process="@this"
+                                                     immediate="true"
+                                                     oncomplete="if (window.updatePointsData) window.updatePointsData();"/>
+                                </h:form>
+                            </div>
+                        </div>
+                        <div class="panel-content">
+                            <h:form id="resultsForm" prependId="false">
+                                <div class="data-table-container">
+                                    <h:dataTable id="resultsTable"
+                                                 value="#{resultsBean.results}"
+                                                 var="point"
+                                                 styleClass="data-table"
+                                                 rowClasses="odd-row, even-row">
+                                        <h:column>
+                                            <f:facet name="header">X</f:facet>
+                                            <h:outputText value="#{point.x}">
+                                                <f:convertNumber maxFractionDigits="3"/>
+                                            </h:outputText>
+                                        </h:column>
+                                        <h:column>
+                                            <f:facet name="header">Y</f:facet>
+                                            <h:outputText value="#{point.y}">
+                                                <f:convertNumber maxFractionDigits="7"/>
+                                            </h:outputText>
+                                        </h:column>
+                                        <h:column>
+                                            <f:facet name="header">R</f:facet>
+                                            <h:outputText value="#{point.r}">
+                                                <f:convertNumber maxFractionDigits="2"/>
+                                            </h:outputText>
+                                        </h:column>
+                                        <h:column>
+                                            <f:facet name="header">RESULT</f:facet>
+                                            <h:outputText value="#{point.hit ? 'HIT' : 'MISS'}"
+                                                          styleClass="#{point.hit ? 'hit' : 'miss'}"/>
+                                        </h:column>
+                                        <h:column>
+                                            <f:facet name="header">EXECUTION TIME</f:facet>
+                                            <h:outputText value="#{point.processTimeInMs}">
+                                                <f:convertNumber maxFractionDigits="2"/>
+                                            </h:outputText> ms
+                                        </h:column>
+                                        <h:column>
+                                            <f:facet name="header">REQUEST TIME</f:facet>
+                                            <h:outputText value="#{point.requestTime}"/>
+                                        </h:column>
+                                    </h:dataTable>
+                                </div>
+                            </h:form>
+                        </div>
+                        <div class="panel-footer">
+                            <h:link outcome="start" styleClass="terminal-btn secondary">
+                                BACK TO START PAGE
+                            </h:link>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="main-footer">
+            <div class="footer-content">
+                <div class="footer-center">
+                    <span class="copyright-info">No rights reserved.</span>
+                </div>
+            </div>
+        </footer>
+
+        <h:outputScript library="js" name="index.js"/>
+        <h:outputScript library="js" name="graph.js"/>
+        <h:outputScript library="js" name="clock.js"/>
+        <script>
+            // Экспорт функций для взаимодействия между файлами
+            if (typeof window !== 'undefined') {
+                window.updateCurrentR = function(newR) {
+                    if (typeof currentR !== 'undefined') {
+                        currentR = newR;
+                    }
+                };
+            }
+        </script>
+    </h:body>
+</f:view>
+</html>
