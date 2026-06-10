@@ -1,0 +1,129 @@
+package ru.itmo.beans;
+
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.Getter;
+import lombok.Setter;
+import ru.itmo.models.Point;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.logging.Logger;
+
+@Named("pointBean")
+@RequestScoped
+@SuppressWarnings("unused")
+public class PointBean {
+    private static final Logger LOGGER = Logger.getLogger(PointBean.class.getName());
+
+    private static final double MIN_X = -4.0;
+    private static final double MAX_X = 4.0;
+    private static final double MIN_Y = -3.0;
+    private static final double MAX_Y = 3.0;
+    private static final double MIN_R = 0.1;
+    private static final double MAX_R = 3.0;
+
+    private static final double TRIANGLE_SLOPE = -0.5;
+    private static final double QUARTER_CIRCLE_RADIUS_FACTOR = 0.5;
+    private static final double TRIANGLE_INTERCEPT_FACTOR = 0.5;
+
+    private static final long NANOSECONDS_IN_MILLISECOND = 1_000_000L;
+    private static final String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+
+    @Getter
+    @Setter
+    private Double x;
+
+    @Getter
+    @Setter
+    private Double y;
+
+    @Getter
+    @Setter
+    private Double r;
+
+    @Getter
+    @Setter
+    private Boolean autoSubmit = false;
+
+    @Getter
+    private Boolean hit;
+
+    @Getter
+    private Float processTimeInMs;
+
+    @Getter
+    private String requestTime;
+
+    @Inject
+    private ResultsBean resultsBean;
+
+    @Inject
+    private HttpServletRequest request;
+
+    public void checkPoint() {
+        Instant startTime = Instant.now();
+
+        try {
+            if (x == null || y == null || r == null) {
+                hit = false;
+                return;
+            }
+
+            if (!isValid(x, y, r)) {
+                hit = false;
+                return;
+            }
+
+            String sessionId = request.getSession().getId();
+            hit = isHit(x, y, r);
+
+            Instant processEndTime = Instant.now();
+            long processTimeNanos = ChronoUnit.NANOS.between(startTime, processEndTime);
+            processTimeInMs = (float) processTimeNanos / NANOSECONDS_IN_MILLISECOND;
+
+            requestTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern(DATE_TIME_PATTERN));
+
+            Point point = new Point(x, y, r, hit, processTimeInMs, requestTime,sessionId);
+            resultsBean.addResult(point);
+
+        } catch (Exception e) {
+            hit = false;
+            processTimeInMs = 0f;
+            requestTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern(DATE_TIME_PATTERN));
+            LOGGER.warning("Error checking point: " + e.getMessage());
+        }
+    }
+
+    private boolean isValid(double x, double y, double r) {
+        if (x < MIN_X || x > MAX_X) {
+            return false;
+        }
+
+        if (y < MIN_Y || y > MAX_Y) {
+            return false;
+        }
+
+        return !(r < MIN_R) && !(r > MAX_R);
+    }
+
+    private boolean isHit(double x, double y, double r) {
+        boolean isOutOfBounds = (Math.abs(x) > r || Math.abs(y) > r);
+        if (isOutOfBounds) {
+            return false;
+        }
+        // 1-я четверть: полукруг радиусом r/2 (центр в 0,0)
+        boolean inQuarterCircle = (x >= 0 && y >= 0 && (x * x + y * y <= r * 0.5 * r * 0.5));
+
+        // 2-я четверть: прямоугольник (-r/2 ≤ x ≤ 0, 0 ≤ y ≤ r)
+        boolean inSquare = (x <= 0 && y >= 0 && x >= -r/2 && y <= r);
+        // 3-я четверть: треугольник с катетами r и r/2
+        boolean inTriangle = (x <= 0 && y <= 0 && (y >= (-0.5 * x - r * 0.5)));
+
+        return inQuarterCircle || inSquare || inTriangle;
+    }
+}
