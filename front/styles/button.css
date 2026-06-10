@@ -1,0 +1,39 @@
+#form button[type="submit"]{
+    border: 1px solid #444;
+    border-radius: 4px;
+    background-color: #8a7f8e;
+    color: #f0f0f0;
+    padding: 6px 12px;
+    margin-top: 5%;
+    margin-left:1% ;
+}
+
+#form button[type="submit"]:hover{
+    color: darkgray ;
+}
+
+
+#form button[type="submit"]:active{
+    background-color: #3e8e41;
+    transform: translateY(2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+#clear{
+    border: 1px solid red;
+    border-radius: 8px;
+    background-color: #ffa089;
+    color:#efeeee;
+    padding: 6px 12px;
+    float: right;
+    margin-top: 5%;
+    margin-right:1% ;
+}
+#clear:hover{
+    color: darkgray ;
+}
+#clear:active{
+    background-color: #3e8e41;
+    transform: translateY(2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}

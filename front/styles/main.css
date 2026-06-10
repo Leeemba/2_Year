@@ -1,0 +1,154 @@
+/*.header {
+    height: 10vh;
+    text-align: center;
+    color: black;
+    font-family: sans-serif;
+    font-size: 15px;
+}*/
+:root {
+    --text: #555;
+    --background: white;
+    --infieldset-color: white;
+    --fieldset-col:#e6e6fa;
+    --summary-back: hsl(360, 40%, 96%);
+    --link-color : blue;
+    --button-bg: #ffffff;
+    --button-border: #aaa;
+    --button-text: #333;
+    --button-pressed-bg: #dcdcff;
+    --button-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+
+    --table-foot: #E4DAC2;
+    --table-backgr: rgb(255 228 225);
+    --table-cell-even: #EFEEEE;
+    --table-cell-odd: transparent;
+}
+
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --text: white;
+        --background: dimgrey;
+        --infieldset-color: transapent;
+        --fieldset-col:#2b2b2b ;
+        --summary-back: dimgrey;
+        --link-color: rgb(135 206 235);
+        --button-bg: #3a3a3a;
+        --button-border: #555;
+        --button-text: #f0f0f0;
+        --button-pressed-bg: #505050;
+        --button-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5);
+
+        --table-foot: #FF6961;
+        --table-backgr: #3a3a3a;
+        --table-cell-even: #2a2a2a;
+        --table-cell-odd:#1e1e1e;
+    }
+}
+
+#github{
+    color: var(--link-color);
+}
+
+#github:hover{
+    color: dimgrey;
+}
+
+
+.input-block {
+    height: 60vh;
+    width: 100%;
+    border: 2px solid black;
+    border-radius: 10px;
+    background-color: var(--background);
+}
+
+.input-header h2 {
+    text-align: center;
+}
+
+.input-XYR {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    /*  align-items: center; */
+}
+
+
+
+
+
+.result-block {
+    height: 50vh;
+    width: 50%;
+    float: left;
+    border: 2px solid black;
+    border-radius: 10px;
+    font-size: 20px;
+    margin-top: 0.4%;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+
+
+
+body {
+    color: var(--text);
+    background: var(--background);
+    font-family: serif;
+}
+
+#result-table {
+    text-align: center;
+    margin: auto;
+    width: 100%;
+    max-width: 100%;
+    border-collapse: separate;
+    font-size: 20px;
+}
+#result-table th,
+#result-table td,
+#result-table tr {
+    border: 2px solid black;
+    border-radius: 10px;
+}
+
+
+#result-table thead th {
+    position: sticky;
+    top: 2px;
+    background-color: var(--background);
+    z-index: 4;
+    border-bottom: 2px solid black;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+}
+
+.graph-block {
+    height: 75vh;
+    float: right;
+    width: 100%;
+    border: 2px solid black;
+    border-radius: 10px;
+    font-size: 20px;
+}
+
+.graph {
+    margin-left: 15%;
+    margin-top: 5%;
+}
+
+.input-log-block {
+    margin-top: 10%;
+    height: 5vh;
+    /*float: right;*/
+    width: 100%;
+    border: 2px solid black;
+    border-radius: 10px;
+    font-size: 20px;
+}
+
+.graphSVG {
+    width: 100%;
+    height: 100%;
+}

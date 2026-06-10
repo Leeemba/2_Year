@@ -1,0 +1,35 @@
+summary::marker{
+    color: #FF6961;
+}
+
+details {
+    position: static;
+    display: block;
+    margin: auto;
+    width: 35%;
+}
+
+
+details[open] {
+    margin-bottom: 12em;
+    background-color: #dcdcff;
+
+}
+
+summary {
+    position: sticky;
+    background: var(--summary-back);
+    font-size: 16px;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    padding: 0.5em;
+    cursor: pointer;
+    border-block: 1px solid hsl(195, 53%, 80%);
+    text-align: left;
+
+
+    &:hover {
+        background: hsl(195, 40%, 86%);
+    }
+}
+

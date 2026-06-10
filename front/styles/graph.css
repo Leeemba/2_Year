@@ -1,0 +1,59 @@
+/* Стили для точек на графике */
+.graph-point {
+    transition: all 0.3s ease;
+}
+
+.graph-point:hover {
+    r: 6;
+    stroke-width: 2;
+    fill-opacity: 1;
+}
+
+.current-point {
+    animation: pulse 1.5s infinite;
+    filter: drop-shadow(0 0 3px rgba(0,0,0,0.5));
+}
+
+@keyframes pulse {
+    0% { r: 5; }
+    50% { r: 7; }
+    100% { r: 5; }
+}
+
+/* Стили для кнопок R */
+.r.selected {
+    background-color: #4CAF50;
+    color: white;
+    transform: scale(1.05);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Лог графика */
+.graph-log {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 12px;
+    color: #666;
+    font-style: italic;
+}
+
+/* Кнопка переключения режима отображения */
+#toggle-points {
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    margin: 10px 0;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#toggle-points:hover {
+    background-color: #0b7dda;
+}
+
+/* Подсветка строк в таблице */
+#result-table tbody tr:hover {
+    background-color: rgba(0,0,0,0.05);
+}
