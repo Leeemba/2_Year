@@ -1,0 +1,25 @@
+name: "hello_user_pstr"
+limit: 500
+memory_size: 0x1000
+
+memory_mapped_io:
+  0x80: [65, 108, 105, 99, 101, 10]
+  0x84: []
+
+reports:
+  - name: Step-by-step
+    slice: all
+    view: |
+      T A S {T:hex} {A:hex} {S:hex} R {R}
+      {pc}: {instruction} {pc:label}
+
+  - name: Result
+    slice: last
+    filter:
+      - state
+    view: |
+      numio[0x80]: {io:0x80:dec}
+      numio[0x84]: {io:0x84:dec}
+      symio[0x80]: {io:0x80:sym}
+      symio[0x84]: {io:0x84:sym}
+      {memory:0:63}
