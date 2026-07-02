@@ -20,7 +20,7 @@ def is_binary_palindrome(n):
 
 
 assert is_binary_palindrome(5) == 0
-assert is_binary_palindrome(15) == 0
+assert is_binary_palindrome(15) == 0q
 assert is_binary_palindrome(4026531855) == 1
 assert is_binary_palindrome(3221225474) == 0
 ```
